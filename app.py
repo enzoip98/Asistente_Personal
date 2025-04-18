@@ -11,6 +11,11 @@ make_webook_url = os.getenv("WEBHOOK_MAKE_URL")
 
 app = Flask(__name__)
 
+
+@app.route('/')
+def home():
+    return "¡La app está corriendo correctamente!"
+
 @app.route('/webhook', methods=['POST'])
 def webhook():
     data = request.form
