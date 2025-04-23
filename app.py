@@ -41,8 +41,8 @@ def webhook():
                     )
                     mensaje_texto = transcript.strip()
 
-        if mensaje_texto:
-            mensaje = mensaje_texto
+            if mensaje_texto:
+                mensaje = mensaje_texto
 
         prompt = f"""
         Extrae los siguientes campos desde este mensaje de WhatsApp y estructura la respuesta en JSON:
