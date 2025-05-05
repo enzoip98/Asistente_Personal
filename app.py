@@ -6,9 +6,14 @@ from dotenv import load_dotenv
 from datetime import datetime
 import json
 import tempfile
+from twilio.rest import Client
 
 load_dotenv()
 make_webook_url = os.getenv("WEBHOOK_MAKE_URL")
+TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACOUNT_SID')
+TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
+TWILIO_WHATSAPP_NUMBER = os.environ.get('TWILIO_WHATSAPP_NUMBER')
+DESTINATION_NUMBER = os.environ.get('DESTINATION_NUMBER')
 
 app = Flask(__name__)
 
@@ -72,6 +77,23 @@ def webhook():
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+@app.route('/response',methods=['POST'])
+def response():
+    client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    data = request.get_json()
+    message = data.get('mensaje') or data.get('message')  # soporte para ambos keys
 
+    if not message:
+        return jsonify({"error": "Falta el campo 'mensaje' en el cuerpo del request"}), 400
+
+    try:
+        sent = client.messages.create(
+            body=message,
+            from_=TWILIO_WHATSAPP_NUMBER,
+            to=DESTINATION_NUMBER
+        )
+        return jsonify({"status": "Mensaje enviado", "sid": sent.sid}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
