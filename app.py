@@ -94,6 +94,8 @@ def response():
         )
         return jsonify({"status": "Mensaje enviado", "sid": sent.sid}), 200
     except Exception as e:
+        import traceback
+        print("❌ Error en /response:", traceback.format_exc())
         return jsonify({"error": str(e)}), 500
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
