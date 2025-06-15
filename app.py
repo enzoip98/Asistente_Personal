@@ -50,18 +50,19 @@ def webhook():
                 mensaje = mensaje_texto
 
         prompt = f"""
-        Extrae los siguientes campos desde este mensaje de WhatsApp y estructura la respuesta en JSON:
+        Actúa como un asistente financiero que me va a ayudar a registrar mis ingresos y egresos de manera precisa y estructurada.
+        Analiza el siguiente mensaje de WhatsApp y extrae la información que te solicito a continuación en un JSON.
 
         - descripcion
         - monto
-        - categoria
+        - categoria (Debe estar en una de las siguientes:Servicios (Pago de internet, Pago de Luz, Pago de telefono, Pago de ), Pareja(almuerzos, salidas y citas), Hogar(compras en supermercados de comida y de cosas de limpieza), Entretenimiento(fiestas y o salidas sin pareja), Movilidad (gasolina y taxis), Paz Mental(regalos a mi mismo), Otros)
         - medio (Signature o Yape)
         - moneda (PEN o USD)
         - tipo (Gasto o Ingreso)
 
         Ejemplo de mensaje: "{mensaje}"
 
-        Respondeme solo con el json, sin texto adicional. Si no encuentras un campo, infierelo.
+        Respondeme solo con el json, sin texto adicional. No inventes información.
         """
 
         response = client.responses.create(
