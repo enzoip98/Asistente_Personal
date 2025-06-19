@@ -56,13 +56,13 @@ def webhook():
         - descripcion
         - monto
         - categoria (Debe estar en una de las siguientes:Servicios (Pago de internet, Pago de Luz, Pago de telefono, Pago de Servicios de nube), Pareja(almuerzos, salidas y citas con mi pareja), Hogar(compras en supermercados de comida y de cosas de limpieza), Entretenimiento(fiestas y o salidas sin pareja), Movilidad (gasolina y taxis), Paz Mental(regalos a mi mismo o a mi familia))
-        - medio (Signature o Yape)
-        - moneda (PEN o USD)
+        - medio (Signature o Yape, asume Signature si no lo menciono)
+        - moneda (PEN o USD, asume PEN si no lo mencionos)
         - tipo (Gasto o Ingreso)
 
         El mensaje es: "{mensaje}"
 
-        Respondeme solo con el json, sin texto adicional. No inventes información.
+        Respondeme solo con el texto en formato json en el output, sin texto adicional. No inventes información.
         """
 
         response = client.responses.create(
