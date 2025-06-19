@@ -62,7 +62,7 @@ def webhook():
 
         El mensaje es: "{mensaje}"
 
-        Respondeme solo con el texto en formato json en el output, sin texto adicional. No inventes información.
+        Tu respuesta debe ser un json que va a pasar por la librería de json de python, sin texto adicional. No inventes información.
         """
 
         response = client.responses.create(
