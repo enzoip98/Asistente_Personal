@@ -55,12 +55,12 @@ def webhook():
 
         - descripcion
         - monto
-        - categoria (Debe estar en una de las siguientes:Servicios (Pago de internet, Pago de Luz, Pago de telefono, Pago de ), Pareja(almuerzos, salidas y citas con mi pareja), Hogar(compras en supermercados de comida y de cosas de limpieza), Entretenimiento(fiestas y o salidas sin pareja), Movilidad (gasolina y taxis), Paz Mental(regalos a mi mismo o a mi familia))
+        - categoria (Debe estar en una de las siguientes:Servicios (Pago de internet, Pago de Luz, Pago de telefono, Pago de Servicios de nube), Pareja(almuerzos, salidas y citas con mi pareja), Hogar(compras en supermercados de comida y de cosas de limpieza), Entretenimiento(fiestas y o salidas sin pareja), Movilidad (gasolina y taxis), Paz Mental(regalos a mi mismo o a mi familia))
         - medio (Signature o Yape)
         - moneda (PEN o USD)
         - tipo (Gasto o Ingreso)
 
-        Ejemplo de mensaje: "{mensaje}"
+        El mensaje es: "{mensaje}"
 
         Respondeme solo con el json, sin texto adicional. No inventes información.
         """
