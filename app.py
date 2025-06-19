@@ -62,12 +62,13 @@ def webhook():
 
         El mensaje es: "{mensaje}"
 
-        Tu respuesta debe ser un json que va a pasar por la librería de json de python, sin texto adicional. No inventes información.
+        Tu respuesta debe ser un json que va a pasar por la librería de json de, sin texto adicional. No inventes información.
         """
 
         response = client.responses.create(
             model = "gpt-4.1",
-            input = prompt
+            input = prompt,
+            response_format={"type": "json_object"}
         )
         json_data =  response.output_text
         datos = json.loads(json_data)
