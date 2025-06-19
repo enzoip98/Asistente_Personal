@@ -64,11 +64,31 @@ def webhook():
 
         Tu respuesta debe ser un json que va a pasar por la librería de json de, sin texto adicional. No inventes información.
         """
-
+        
+        schema = {
+            "type": "object",
+            "properties": {
+                "descripcion": {"type": "string"},
+                "monto":       {"type": "string"},   # ← todo string
+                "categoria":   {"type": "string"},
+                "medio":       {"type": "string"},
+                "moneda":      {"type": "string"},
+                "tipo":        {"type": "string"}
+            },
+            "required": ["descripcion", "monto", "categoria",
+                        "medio", "moneda", "tipo"],
+            "additionalProperties": False
+        }
         response = client.responses.create(
             model = "gpt-4.1",
             input = prompt,
-            response_format={"type": "json_object"}
+            text={
+                "format":{
+                    "type": "json_schema",
+                    "schema": schema,
+                    "strict" : True
+                }
+            }
         )
         json_data =  response.output_text
         datos = json.loads(json_data)
