@@ -90,6 +90,7 @@ def webhook():
                 }
             }
         )
+        print(response.output_text)
         json_data =  response.output_text
         datos = json.loads(json_data)
         datos["fecha"] = datetime.now().strftime("%Y-%m-%d")
