@@ -81,14 +81,7 @@ def webhook():
         }
         response = client.responses.create(
             model = "gpt-4.1",
-            input = prompt,
-            text={
-                "format":{
-                    "type": "json_schema",
-                    "schema": schema,
-                    "strict" : True
-                }
-            }
+            input = prompt
         )
         print(response.output_text)
         json_data =  response.output_text
