@@ -55,7 +55,7 @@ def webhook():
 
         - descripcion
         - monto
-        - categoria (Debe estar en una de las siguientes:Servicios (Pago de internet, Pago de Luz, Pago de telefono, Pago de Servicios de nube), Pareja(almuerzos, salidas y citas con mi pareja), Hogar(compras en supermercados de comida y de cosas de limpieza), Entretenimiento(fiestas y o salidas sin pareja), Movilidad (gasolina y taxis), Paz Mental(regalos a mi mismo o a mi familia))
+        - categoria (Debe estar en una de las siguientes:Servicios (Pago de internet, Pago de Luz, Pago de telefono, Pago de Servicios de nube), Pareja(almuerzos, salidas y citas con mi pareja), Hogar(compras de productos de limpieza para el hogar), Entretenimiento(fiestas y o salidas sin pareja), Movilidad (gasolina y taxis), Gustos(regalos a mi mismo o a mi familia), Comida ( gastos en almuerzo o supermercado))
         - medio (Signature o Yape, asume Signature si no lo menciono)
         - moneda (PEN o USD, asume PEN si no lo mencionos)
         - tipo (Gasto o Ingreso)
