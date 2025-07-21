@@ -2,3 +2,6 @@
 __pycache__/
 venv/
 *.pyc
+app_bk.py
+creds.json
+token.pickle
