@@ -71,7 +71,7 @@ def home():
 @app.route('/webhook', methods=['POST'])
 def webhook():
     data = request.form
-    numero: str = data.get("From", "").split("+")[-1]
+    numero: str = data.get("From", "").split(":")[-1]
     mensaje: str = data.get("Body", "")
     #media_url = data.get("MediaUrl0")
     #media_type = data.get("MediaContentType0", "")
