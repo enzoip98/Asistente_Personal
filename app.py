@@ -19,7 +19,7 @@ TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACOUNT_SID')
 TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
 TWILIO_WHATSAPP_NUMBER = os.environ.get('TWILIO_WHATSAPP_NUMBER')
 DESTINATION_NUMBER = os.environ.get('DESTINATION_NUMBER')
-
+b64_pickle = os.getenv('TOKEN_PICKLE_B64')
 app = Flask(__name__)
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
@@ -27,14 +27,12 @@ TOKEN_PATH = os.getenv('TOKEN_PICKLE', 'token.pickle')
 CLIENT_SECRET_PATH = os.getenv('CLIENT_SECRET', 'credentials.json')
 
 def get_credentials():
-    if os.getenv('TOKEN_PICKLE_B64') and not os.path.exists(TOKEN_PATH):
-        with open(TOKEN_PATH, 'wb') as f:
-            f.write(base64.b64decode(os.getenv('TOKEN_PICKLE_B64')))
-        print("Archivo creado")
-    if os.path.exists(TOKEN_PATH):
-        with open(TOKEN_PATH, 'rb') as token:
-            creds = pickle.load(token)
-        print("Credenciales cargadas")
+    if b64_pickle:
+        try:
+            token_bytes = base64.b64decode(b64_pickle)
+            creds = pickle.loads(token_bytes)
+        except Exception:
+            creds = None
     return creds
 
 def response(mensaje: str, DESTINATION_NUMBER: str):
