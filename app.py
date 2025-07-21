@@ -3,6 +3,7 @@ import os
 import json
 import tempfile
 import pickle
+import base64
 from dotenv import load_dotenv
 from datetime import datetime
 from flask import Flask, request, jsonify
@@ -26,11 +27,14 @@ TOKEN_PATH = os.getenv('TOKEN_PICKLE', 'token.pickle')
 CLIENT_SECRET_PATH = os.getenv('CLIENT_SECRET', 'credentials.json')
 
 def get_credentials():
-    creds = None
+    if os.getenv('TOKEN_PICKLE_B64') and not os.path.exists(TOKEN_PATH):
+        with open(TOKEN_PATH, 'wb') as f:
+            f.write(base64.b64decode(os.getenv('TOKEN_PICKLE_B64')))
+        print("Archivo creado")
     if os.path.exists(TOKEN_PATH):
         with open(TOKEN_PATH, 'rb') as token:
             creds = pickle.load(token)
-    print("Credenciales cargadas")
+        print("Credenciales cargadas")
     return creds
 
 def response(mensaje: str, DESTINATION_NUMBER: str):
