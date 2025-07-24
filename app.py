@@ -133,7 +133,7 @@ def webhook():
                         prompt_response = client.responses.create(
                         prompt={
                             "id": register_promt_id,
-                            "version": "3",
+                            "version": "4",
                             "variables": {
                             "mensaje": f"{mensaje}"
                             }
