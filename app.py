@@ -13,8 +13,9 @@ from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
+
+# Load of environment variables
 load_dotenv()
-make_webook_url = os.getenv('WEBHOOK_MAKE_URL')
 TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACOUNT_SID')
 TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
 TWILIO_WHATSAPP_NUMBER = os.environ.get('TWILIO_WHATSAPP_NUMBER')
@@ -146,7 +147,7 @@ def webhook():
 
                         for i in range(len(data['categorias_gasto'])):
                             target_range = "Presupuesto!A"+str(i+3)+":D"
-                            insertion_row = {'values':[[data['categorias_gasto'][i],'','=SUMAR.SI.CONJUNTO(Gastos!H:H;Gastos!D:D;">" & FECHA(AÑO(HOY()-9);MES(HOY()-9);9);Gastos!D:D;"<=" & FECHA(AÑO(HOY()-9);MES(HOY()-9)+1;10))','=INDICE(B:B;FILA())-INDICE(C:C;FILA())']]}
+                            insertion_row = {'values':[[data['categorias_gasto'][i],'','=SUMAR.SI.CONJUNTO(Gastos!H:H;Gastos!D:D;">" & FECHA(AÑO(HOY()-9);MES(HOY()-9);9);Gastos!D:D;"<=" & FECHA(AÑO(HOY()-9);MES(HOY()-9)+1;9);Gastos!B:B;INDICE(A:A;FILA()))','=INDICE(B:B;FILA())-INDICE(C:C;FILA())']]}
                             insert_row(target_range, insertion_row,new_sheet_id)
                         
 
