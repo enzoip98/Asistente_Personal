@@ -3,7 +3,7 @@ from constants import mensaje_bienvenida_usuario
 import requests
 import os
 import json
-import tempfile
+import time
 from dotenv import load_dotenv
 from datetime import datetime
 from flask import Flask, request, jsonify
@@ -78,10 +78,11 @@ def webhook():
                             }
                         }
                         )
-
+                        
                         # Parsing the response from the AI
                         json_data = prompt_response.output_text
                         data = json.loads(json_data)
+                        print(data)
                         for i in data:
                             if i == "null":
                                 whatsapp_reponse(
@@ -94,20 +95,25 @@ def webhook():
                                 return jsonify({'error': 'Error en el formato de la respuesta, por favor intente de nuevo.'}), 400
                         #creating and sharing the user sheet
                         new_sheet_id = copy_sheet(PLANTILLA_ID, data['correo_electronico'], b64_pickle)
+                        print("sheet created with id: ", new_sheet_id)
                         share_sheet(new_sheet_id, data['correo_electronico'], b64_pickle)
+                        print("sheet shared with: ", data['correo_electronico'])
 
                         # Inserting the user data into the new sheet
                         for i in range(len(data['categorias_gasto'])):
+                            print("Adding category: ", data['categorias_gasto'][i])
                             target_range = "Presupuesto!A"+str(i+3)+":D"
                             insertion_row = {'values':[[data['categorias_gasto'][i],'',formula_presupuesto,formula_diferencia]]}
                             insert_row(target_range, insertion_row,new_sheet_id, sheets_service)
                         # Inserting the user data into the new sheet
                         for i in range(len(data['medio_de_pago'])):
+                            print("Adding paymenth method: ", data['medio_de_pago'][i])
                             target_range = "Datos_Usuario!A"+str(i+2)
                             insertion_row = {'values':[[data['medio_de_pago'][i]]]}
                             insert_row(target_range, insertion_row, new_sheet_id, sheets_service)
                         # Inserting the user data into the new sheet
                         insert_row( "Datos_Usuario!B2", {'values':[[data['moneda_principal']]]}, new_sheet_id, sheets_service)
+                        print("Adding currency")
                         
                         # Inserting the user data into the users database
                         insertion_row_number = rows.index(row) + 1
@@ -200,6 +206,7 @@ def webhook():
         TWILIO_ACCOUNT_SID,
         TWILIO_AUTH_TOKEN,
         TWILIO_WHATSAPP_NUMBER)
+        time.sleep(3)
         whatsapp_reponse(
         mensaje_ejemplo_usuario,
         numero,

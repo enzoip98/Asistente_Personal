@@ -1,15 +1,15 @@
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 SEARCH_COLUMN = "phone"
-formula_presupuesto  = '=SUMAR.SI.CONJUNTO(Gastos!H:H;Gastos!D:D;">" & FECHA(AÑO(HOY()-9);MES(HOY()-9);9);Gastos!D:D;"<=" & FECHA(AÑO(HOY()-9);MES(HOY()-9)+1;9);Gastos!B:B;INDICE(A:A;FILA()))'
+formula_presupuesto  = '=SUMAR.SI.CONJUNTO(Gastos!H:H;Gastos!D:D;">" & FECHA(AÑO(HOY());MES(HOY());1);Gastos!D:D;"<=" & FECHA(AÑO(HOY());MES(HOY())+1;1);Gastos!B:B;INDICE(A:A;FILA()))'
 formula_diferencia = '=INDICE(B:B;FILA())-INDICE(C:C;FILA())'
 
 mensaje_bienvenida_usuario = """
 Bienvenido al Asistente Financiero. Para continuar con tu registro necesitaré la siguiente información en un solo mensaje:
 correo electrónico, categorías de gasto, moneda principal y medio de pago.
+Ejemplo:
 """
 mensaje_ejemplo_usuario = """
-Por ejemplo
 correo electrónico: usuario@gmail.com
 categorías de gasto: Servicios, Pareja, Hogar, Comida, Movilidad, Gustos
 moneda principal: PEN
