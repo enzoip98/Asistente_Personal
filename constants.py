@@ -17,11 +17,11 @@ medio de pago:Tarjeta de Crédito, Yape, Efectivo
 """
 
 mensaje_confirmacion_usuario = """
-Gracias por la información proporcionada. He creado una hoja de cálculo para ti. """
+Gracias por la información proporcionada.Te enviaré el link de la hoja de cálculo en la que tienes que completar tu información de presupuesto. """
 
 mensaje_pago_usuario = """
 Ahora para activar tu usuario debes realizar el pago de 20 soles a este QR de Yape.
-Una vez lo realices se realizará la activación de tu usuario"""
+Una vez lo realices se realizará la activación de tu usuario."""
 
 class user_info:
     def __init__(self,information_row):
