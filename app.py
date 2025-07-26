@@ -186,14 +186,14 @@ def webhook():
                         for row in budget_rows[2:]:
                             if row[0] == data['categoria']:
                                 buget = row[3]
-                        if data['tipo'] == "gasto":
+                        if data['tipo'] == "Gasto":
                             whatsapp_reponse(
                                 f"Se ha registrado el gasto, tu presupuesto restante para la categoria {data['categoria']} es de {buget} {user_data.moneda}.",
                                 numero,
                                 TWILIO_ACCOUNT_SID,
                                 TWILIO_AUTH_TOKEN,
                                 TWILIO_WHATSAPP_NUMBER)
-                        elif data['tipo'] == "ingreso":
+                        elif data['tipo'] == "Ingreso":
                             whatsapp_reponse(
                                 f"Se ha registrado el ingreso.",
                                 numero,
