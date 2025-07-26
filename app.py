@@ -183,6 +183,7 @@ def webhook():
                             user_data.url_sheet,
                             sheets_service)
                         
+                        time.sleep(3)
                         for row in budget_rows[2:]:
                             if row[0] == data['categoria']:
                                 buget = row[3]
