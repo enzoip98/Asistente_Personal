@@ -140,11 +140,6 @@ def webhook():
                         range="Registro!A:G"
                     ).execute()
                     rows = result.get('values', [])
-                    result_buget = sheets_service.spreadsheets().values().get(
-                        spreadsheetId=user_data.url_sheet,
-                        range="Presupuesto!A:d"
-                    ).execute()
-                    budget_rows = result_buget.get('values', [])
                     try:
                         client = OpenAI()
                         prompt_response = client.responses.create(
@@ -182,10 +177,14 @@ def webhook():
                             ]]},
                             user_data.url_sheet,
                             sheets_service)
-
+                        result_buget = sheets_service.spreadsheets().values().get(
+                            spreadsheetId=user_data.url_sheet,
+                            range="Presupuesto!A:d"
+                        ).execute()
+                        budget_rows = result_buget.get('values', [])
                         for row in budget_rows[2:]:
                             if row[0] == data['categoria']:
-                                buget = float(row[3])-float(data['monto'])
+                                buget = row[3]
                         if data['tipo'] == "Gasto":
                             whatsapp_reponse(
                                 f"Se ha registrado el gasto, tu presupuesto restante para la categoria {data['categoria']} es de {buget} {user_data.moneda}.",
