@@ -182,11 +182,10 @@ def webhook():
                             ]]},
                             user_data.url_sheet,
                             sheets_service)
-                        
-                        time.sleep(3)
+
                         for row in budget_rows[2:]:
                             if row[0] == data['categoria']:
-                                buget = row[3]
+                                buget = float(row[3])-float(data['monto'])
                         if data['tipo'] == "Gasto":
                             whatsapp_reponse(
                                 f"Se ha registrado el gasto, tu presupuesto restante para la categoria {data['categoria']} es de {buget} {user_data.moneda}.",
