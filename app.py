@@ -23,6 +23,7 @@ DESTINATION_NUMBER = os.environ.get('DESTINATION_NUMBER')
 b64_pickle = os.getenv('TOKEN_PICKLE_B64')
 register_promt_id = os.getenv('register_promt_id')
 spent_prompt_id = os.getenv('spent_prompt_id')
+decision_prompt_id = os.getenv("decision_prompt_id")
 app = Flask(__name__)
 SPREADSHEET_ID: str = os.getenv('USUARIOS_ID','none')
 PLANTILLA_ID: str  = os.getenv('PLANTILLA_ID','none')
@@ -69,14 +70,15 @@ def webhook():
                     # User is found but is inactive so is asked for information
                     try:
                         client = OpenAI()
-                        prompt_response = client.responses.create(
+                        prompt_response = client.responses.parse(
                         prompt={
                             "id": register_promt_id,
-                            "version": "5",
+                            "version": "6",
                             "variables": {
                             "mensaje": f"{mensaje}"
                             }
-                        }
+                        },
+                        text_format=user_info
                         )
                         
                         # Parsing the response from the AI
@@ -135,74 +137,114 @@ def webhook():
                     except:
                         return jsonify({'error': 'Error al añadir informacion del usuario'}), 500
                 elif user_data.status == "active":
-                    result = sheets_service.spreadsheets().values().get(
-                        spreadsheetId=user_data.url_sheet,
-                        range="Registro!A:G"
-                    ).execute()
-                    rows = result.get('values', [])
-                    try:
-                        client = OpenAI()
-                        prompt_response = client.responses.create(
-                            prompt={
-                                "id": spent_prompt_id,
-                                "version": "3",
-                                "variables": {
-                                "categorias": f"{user_data.categories}",
-                                "metodos": f"{user_data.medio_pago}",
-                                "moneda": f"{user_data.moneda}",
-                                "mensaje": f"{mensaje}"
-                                }
+                    client = OpenAI()
+                    decision = client.responses.create(
+                        prompt = {
+                            "id"  : decision_prompt_id,
+                            "version": "1",
+                            "variables": {
+                            "mensaje": f"{mensaje}"
                             }
-                            )
-                        json_data = prompt_response.output_text
-                        data = json.loads(json_data)
-                        for i in data:
-                            if i == "null":
+                        }
+                    )
+                    if decision.output_text == "gasto":
+                        result = sheets_service.spreadsheets().values().get(
+                            spreadsheetId=user_data.url_sheet,
+                            range="Registro!A:G"
+                        ).execute()
+                        rows = result.get('values', [])
+                        try:
+                            prompt_response = client.responses.parse(
+                                prompt={
+                                    "id": spent_prompt_id,
+                                    "version": "4",
+                                    "variables": {
+                                    "categorias": f"{user_data.categories}",
+                                    "metodos": f"{user_data.medio_pago}",
+                                    "moneda": f"{user_data.moneda}",
+                                    "mensaje": f"{mensaje}"
+                                    }
+                                },
+                                text_format=spent
+                                )
+                            json_data = prompt_response.output_text
+                            data = json.loads(json_data)
+                            for i in data:
+                                if i == "null":
+                                    whatsapp_reponse(
+                                        "No entendí, puedes repetir pls.",
+                                        numero,
+                                        TWILIO_ACCOUNT_SID,
+                                        TWILIO_AUTH_TOKEN,
+                                        TWILIO_WHATSAPP_NUMBER
+                                    )
+                                    return jsonify({'error': 'Error en el formato de la respuesta, por favor intente de nuevo.'}), 400
+                            insert_row("Registro!A"+str(len(rows)+1), {'values':[[
+                                data['descripcion'],
+                                data['categoria'],
+                                data['monto'],
+                                str(datetime.now().strftime('%d/%m/%Y')),
+                                data['medio'],
+                                data['moneda'],
+                                data['tipo']
+                                ]]},
+                                user_data.url_sheet,
+                                sheets_service)
+                            result_buget = sheets_service.spreadsheets().values().get(
+                                spreadsheetId=user_data.url_sheet,
+                                range="Presupuesto!A:d"
+                            ).execute()
+                            budget_rows = result_buget.get('values', [])
+                            for row in budget_rows[2:]:
+                                if row[0] == data['categoria']:
+                                    buget = row[3]
+                            if data['tipo'] == "Gasto":
                                 whatsapp_reponse(
-                                    "No entendí, puedes repetir pls.",
+                                    f"Se ha registrado el gasto, tu presupuesto restante para la categoria {data['categoria']} es de {buget} {user_data.moneda}.",
                                     numero,
                                     TWILIO_ACCOUNT_SID,
                                     TWILIO_AUTH_TOKEN,
-                                    TWILIO_WHATSAPP_NUMBER
-                                )
-                                return jsonify({'error': 'Error en el formato de la respuesta, por favor intente de nuevo.'}), 400
-                        insert_row("Registro!A"+str(len(rows)+1), {'values':[[
-                            data['descripcion'],
-                            data['categoria'],
-                            data['monto'],
-                            str(datetime.now().strftime('%d/%m/%Y')),
-                            data['medio'],
-                            data['moneda'],
-                            data['tipo']
-                            ]]},
-                            user_data.url_sheet,
-                            sheets_service)
+                                    TWILIO_WHATSAPP_NUMBER)
+                            elif data['tipo'] == "Ingreso":
+                                whatsapp_reponse(
+                                    f"Se ha registrado el ingreso.",
+                                    numero,
+                                    TWILIO_ACCOUNT_SID,
+                                    TWILIO_AUTH_TOKEN,
+                                    TWILIO_WHATSAPP_NUMBER)
+                            return jsonify({'status': 'ok', 'message': 'Se registra evento del usuario.'}), 200
+                        except: 
+                            return jsonify({'error': 'Error al registrar evento del usuario'}), 500
+                    elif decision.output_text == "solicitud":
                         result_buget = sheets_service.spreadsheets().values().get(
-                            spreadsheetId=user_data.url_sheet,
-                            range="Presupuesto!A:d"
-                        ).execute()
+                                spreadsheetId=user_data.url_sheet,
+                                range="Presupuesto!A:d"
+                            ).execute()
                         budget_rows = result_buget.get('values', [])
-                        for row in budget_rows[2:]:
-                            if row[0] == data['categoria']:
-                                buget = row[3]
-                        if data['tipo'] == "Gasto":
+                        categories_budget = [sublist[0] for sublist in budget_rows[2:]]
+                        found_flag = False
+                        for i in range(len(categories_budget)):
+                            if categories_budget[i] in mensaje:
+                                found_flag = True
+                                break
+                        if found_flag:
+                            budget  = budget_rows[i+2][3]
                             whatsapp_reponse(
-                                f"Se ha registrado el gasto, tu presupuesto restante para la categoria {data['categoria']} es de {buget} {user_data.moneda}.",
+                                f"Tu presupuesto restante para la categoria {categories_budget[i]} es de {budget} {user_data.moneda}.",
                                 numero,
                                 TWILIO_ACCOUNT_SID,
                                 TWILIO_AUTH_TOKEN,
                                 TWILIO_WHATSAPP_NUMBER)
-                        elif data['tipo'] == "Ingreso":
+                        else:
+                            budget  = budget_rows[i][3]
                             whatsapp_reponse(
-                                f"Se ha registrado el ingreso.",
+                                f"Tu presupuesto restante es de {budget} {user_data.moneda}.",
                                 numero,
                                 TWILIO_ACCOUNT_SID,
                                 TWILIO_AUTH_TOKEN,
                                 TWILIO_WHATSAPP_NUMBER)
-                        return jsonify({'status': 'ok', 'message': 'Se registra evento del usuario.'}), 200
-                    except: 
-                        return jsonify({'error': 'Error al registrar evento del usuario'}), 500
-        
+                        return jsonify({'status': 'ok', 'message': 'Se atiende solicitud del usuario.'}), 200
+                                
         # If the user is not found in  the database new user is created
         create_user(rows, numero, SHEET_NAME, SPREADSHEET_ID, sheets_service)
         # Sending the welcome message to the user

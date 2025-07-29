@@ -1,3 +1,18 @@
+from pydantic import BaseModel
+
+class spent(BaseModel):
+    descripcion: str
+    monto: str
+    categoria: str
+    medio: str
+    moneda: str
+    tipo: str
+
+class user_info(BaseModel):
+    correo_electronico: str
+    categorias_gasto: str
+    moneda_principal: str
+    medio_de_pago: str
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 SEARCH_COLUMN = "phone"
