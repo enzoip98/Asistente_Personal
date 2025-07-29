@@ -236,7 +236,7 @@ def webhook():
                                 TWILIO_AUTH_TOKEN,
                                 TWILIO_WHATSAPP_NUMBER)
                         else:
-                            budget  = budget_rows[i][3]
+                            budget  = budget_rows[0][3]
                             whatsapp_reponse(
                                 f"Tu presupuesto restante es de {budget} {user_data.moneda}.",
                                 numero,
