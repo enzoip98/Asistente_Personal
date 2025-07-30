@@ -1,19 +1,3 @@
-from pydantic import BaseModel
-
-class spent(BaseModel):
-    descripcion: str
-    monto: str
-    categoria: str
-    medio: str
-    moneda: str
-    tipo: str
-
-class user_info(BaseModel):
-    correo_electronico: str
-    categorias_gasto: str
-    moneda_principal: str
-    medio_de_pago: str
-
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 SEARCH_COLUMN = "phone"
 formula_presupuesto  = '=SUMAR.SI.CONJUNTO(Gastos!H:H;Gastos!D:D;">" & FECHA(AÑO(HOY());MES(HOY());1);Gastos!D:D;"<=" & FECHA(AÑO(HOY());MES(HOY())+1;1);Gastos!B:B;INDICE(A:A;FILA()))'

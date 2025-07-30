@@ -73,12 +73,11 @@ def webhook():
                         prompt_response = client.responses.parse(
                         prompt={
                             "id": register_promt_id,
-                            "version": "6",
+                            "version": "7",
                             "variables": {
                             "mensaje": f"{mensaje}"
                             }
-                        },
-                        text_format=user_info
+                        }
                         )
                         
                         # Parsing the response from the AI
@@ -134,8 +133,8 @@ def webhook():
                         whatsapp_reponse(mensaje_confirmacion_usuario + f"https://docs.google.com/spreadsheets/d/{new_sheet_id}/edit", numero, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER)
                         whatsapp_reponse(mensaje_pago_usuario, numero, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER)
                         return jsonify({'status': 'ok', 'message': 'Se añade informacion del usuario.'}), 200
-                    except:
-                        return jsonify({'error': 'Error al añadir informacion del usuario'}), 500
+                    except Exception as e:
+                        return jsonify({'error': f'Error al procesar la solicitud: {str(e)}'}), 500
                 elif user_data.status == "active":
                     client = OpenAI()
                     decision = client.responses.create(
@@ -164,8 +163,7 @@ def webhook():
                                     "moneda": f"{user_data.moneda}",
                                     "mensaje": f"{mensaje}"
                                     }
-                                },
-                                text_format=spent
+                                }
                                 )
                             json_data = prompt_response.output_text
                             data = json.loads(json_data)
@@ -254,7 +252,7 @@ def webhook():
         TWILIO_ACCOUNT_SID,
         TWILIO_AUTH_TOKEN,
         TWILIO_WHATSAPP_NUMBER)
-        time.sleep(3)
+        time.sleep(1)
         whatsapp_reponse(
         mensaje_ejemplo_usuario,
         numero,
