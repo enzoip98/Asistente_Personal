@@ -4,9 +4,12 @@ formula_presupuesto  = '=SUMAR.SI.CONJUNTO(Gastos!H:H;Gastos!D:D;">" & FECHA(AÑ
 formula_diferencia = '=INDICE(B:B;FILA())-INDICE(C:C;FILA())'
 
 mensaje_bienvenida_usuario = """
-Bienvenido al Asistente Financiero. Para continuar con tu registro necesitaré la siguiente información en un solo mensaje:
-correo electrónico, categorías de gasto, moneda principal y medio de pago.
-Ejemplo:
+Bienvenide al Asistente Financiero 🙌. Para continuar con tu registro necesitaré la siguiente información
+Correo eletrónico con acceso a google (vamos crearte una hoja de google sheets)
+Todas las categorías de gasto que vayas a utilizar para registrar tus gastos
+Moneda principal para tus gastos
+Medios de pago que utilizarás para registrar tus gatos
+Aquí te envío un ejemplo:
 """
 mensaje_ejemplo_usuario = """
 correo electrónico: usuario@gmail.com
@@ -14,13 +17,14 @@ categorías de gasto: Servicios, Pareja, Hogar, Comida, Movilidad, Gustos
 moneda principal: PEN
 medio de pago:Tarjeta de Crédito, Yape, Efectivo
 """
-
+mensaje_de_recibido = """
+Listo, recibí el mensaje, dejame pienso un momento. 🤓
+"""
 mensaje_confirmacion_usuario = """
-Gracias por la información proporcionada.Te enviaré el link de la hoja de cálculo en la que tienes que completar tu información de presupuesto. """
+Te envio el link de la hoja de cálculo que creé para ti, recuerda que igual debes completar tu información de presupuestos en la pestaña de presupuestos en la hoja, estará resaltado en amarillo. """
 
 mensaje_pago_usuario = """
-Ahora para activar tu usuario debes realizar el pago de 20 soles a este QR de Yape.
-Una vez lo realices se realizará la activación de tu usuario."""
+Ahora, para activar tu usuario deberás realizar un pago de 20 soles al 922478866 (Yape) o si están en el extranjero puedes usar global66 o paypal por un total de 8 dolares 💰💰"""
 
 class user_info:
     def __init__(self,information_row):

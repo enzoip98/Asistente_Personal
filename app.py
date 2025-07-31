@@ -1,3 +1,4 @@
+from constants import mensaje_de_recibido
 from constants import mensaje_ejemplo_usuario
 from constants import mensaje_bienvenida_usuario
 import requests
@@ -65,6 +66,12 @@ def webhook():
         # looking up for the whatsapp sender in the users database
         for row in rows[1:]:
             if row[idx] == numero:
+                whatsapp_reponse(
+                mensaje_de_recibido,
+                numero,
+                TWILIO_ACCOUNT_SID,
+                TWILIO_AUTH_TOKEN,
+                TWILIO_WHATSAPP_NUMBER)
                 user_data = user_info(row)
                 if user_data.status == "inactive":
                     # User is found but is inactive so is asked for information
