@@ -23,7 +23,7 @@ mensaje_de_recibido = """
 Listo, recibí el mensaje, dejame pienso un momento. 🤓
 """
 mensaje_confirmacion_usuario = """
-Te envio el link de la hoja de cálculo que creé para ti, recuerda que igual debes completar tu información de presupuestos en la pestaña de presupuestos en la hoja, estará resaltado en amarillo. """
+Te envio el link de la hoja de cálculo que creé para ti """
 
 mensaje_budget_usuario = """
 Perfecto, ahora voy a necesitar la información del presupuesto que quieres asignar a cada categoría.

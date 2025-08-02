@@ -198,7 +198,7 @@ def webhook():
                             prompt_response = client.responses.parse(
                                 prompt={
                                     "id": spent_prompt_id,
-                                    "version": "4",
+                                    "version": "5",
                                     "variables": {
                                     "categorias": f"{user_data.categories}",
                                     "metodos": f"{user_data.medio_pago}",
