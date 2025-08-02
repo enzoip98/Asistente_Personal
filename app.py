@@ -167,7 +167,7 @@ def webhook():
                             'values':[['pending_payment']]
                         }            
                         insert_row(target_range, insertion_row, SPREADSHEET_ID, sheets_service)
-                        whatsapp_reponse(mensaje_confirmacion_usuario + f"https://docs.google.com/spreadsheets/d/{user_info.url_sheet}/edit", numero, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER)
+                        whatsapp_reponse(mensaje_confirmacion_usuario + f"https://docs.google.com/spreadsheets/d/{user_data.url_sheet}/edit", numero, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER)
                         whatsapp_reponse(mensaje_pago_usuario, numero, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER)
                         return jsonify({'status': 'ok', 'message': 'Se añade informacion del usuario.'}), 200
                     except Exception as e:
