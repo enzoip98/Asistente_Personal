@@ -88,9 +88,9 @@ def webhook():
                         
                         # Parsing the response from the AI
                         json_data = prompt_response.output_text
-                        data = json.loads(json_data)
+                        data:dict = json.loads(json_data)
                         print(data)
-                        for i in data:
+                        for i in data.values():
                             if i == "" or i == []:
                                 whatsapp_reponse(
                                     "Error en el formato de la respuesta, por favor intente de nuevo.",
