@@ -153,6 +153,7 @@ def webhook():
                             try:
                                 budget_list[i] == float(budget_list[i])
                             except Exception as e:
+                                print(e)
                                 whatsapp_reponse(mensaje_pago_usuario, numero, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER)
                                 return jsonify({'error': f'Error al procesar la solicitud: {str(e)}'}), 500
                         for i in range(len(budget_list)):
@@ -170,6 +171,7 @@ def webhook():
                         whatsapp_reponse(mensaje_pago_usuario, numero, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER)
                         return jsonify({'status': 'ok', 'message': 'Se añade informacion del usuario.'}), 200
                     except Exception as e:
+                        print(e)
                         whatsapp_reponse("Hubo un error al ingresar tus datos, vuelve a intentarlo o comunicate con el administrador.", numero, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER)
                         return jsonify({'error': f'Error al procesar la solicitud: {str(e)}'}), 500
                 elif user_data.status == "pending_payment":
