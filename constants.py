@@ -8,7 +8,9 @@ Bienvenide al Asistente Financiero 🙌. Para continuar con tu registro necesita
 Correo eletrónico con acceso a google (vamos crearte una hoja de google sheets)
 Todas las categorías de gasto que vayas a utilizar para registrar tus gastos
 Moneda principal para tus gastos
-Medios de pago que utilizarás para registrar tus gatos
+Medios de pago que utilizarás para registrar tus gatos.
+
+Recuerda que la respuesta debe ir en un solo mensaje
 Aquí te envío un ejemplo:
 """
 mensaje_ejemplo_usuario = """
@@ -22,6 +24,12 @@ Listo, recibí el mensaje, dejame pienso un momento. 🤓
 """
 mensaje_confirmacion_usuario = """
 Te envio el link de la hoja de cálculo que creé para ti, recuerda que igual debes completar tu información de presupuestos en la pestaña de presupuestos en la hoja, estará resaltado en amarillo. """
+
+mensaje_budget_usuario = """
+Perfecto, ahora voy a necesitar la información del presupuesto que quieres asignar a cada categoría.
+Envíame los montos de cada categoría en el orden que enviaste anteriormente separado por comas.
+Por ejemplo: 3000,550,200,500,400,200
+"""
 
 mensaje_pago_usuario = """
 Ahora, para activar tu usuario deberás realizar un pago de 20 soles al 922478866 (Yape) o si están en el extranjero puedes usar global66 o paypal por un total de 8 dolares 💰💰"""

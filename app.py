@@ -1,3 +1,4 @@
+from constants import user_info
 from constants import mensaje_de_recibido
 from constants import mensaje_ejemplo_usuario
 from constants import mensaje_bienvenida_usuario
@@ -50,8 +51,6 @@ def webhook():
     data = request.form
     numero: str = data.get("From", "").split("+")[-1]
     mensaje: str = data.get("Body", "")
-    #media_url = data.get("MediaUrl0")
-    #media_type = data.get("MediaContentType0", "")
 
     #Start of the process
     try:
@@ -92,7 +91,7 @@ def webhook():
                         data = json.loads(json_data)
                         print(data)
                         for i in data:
-                            if i == "null":
+                            if i == "" or i == []:
                                 whatsapp_reponse(
                                     "Error en el formato de la respuesta, por favor intente de nuevo.",
                                     numero,
@@ -109,19 +108,16 @@ def webhook():
 
                         # Inserting the user data into the new sheet
                         for i in range(len(data['categorias_gasto'])):
-                            print("Adding category: ", data['categorias_gasto'][i])
                             target_range = "Presupuesto!A"+str(i+3)+":D"
                             insertion_row = {'values':[[data['categorias_gasto'][i],'',formula_presupuesto,formula_diferencia]]}
                             insert_row(target_range, insertion_row,new_sheet_id, sheets_service)
                         # Inserting the user data into the new sheet
                         for i in range(len(data['medio_de_pago'])):
-                            print("Adding paymenth method: ", data['medio_de_pago'][i])
                             target_range = "Datos_Usuario!A"+str(i+2)
                             insertion_row = {'values':[[data['medio_de_pago'][i]]]}
                             insert_row(target_range, insertion_row, new_sheet_id, sheets_service)
                         # Inserting the user data into the new sheet
                         insert_row( "Datos_Usuario!B2", {'values':[[data['moneda_principal']]]}, new_sheet_id, sheets_service)
-                        print("Adding currency")
                         
                         # Inserting the user data into the users database
                         insertion_row_number = rows.index(row) + 1
@@ -130,18 +126,55 @@ def webhook():
                             'values':[
                                 [numero,
                                 data['correo_electronico'],
-                                'pendiente_de_pago',
+                                'pending_budget',
                                 data['moneda_principal'],
                                 ','.join(data['medio_de_pago']),
                                 ','.join(data['categorias_gasto']),
                                 new_sheet_id,
                                 str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]]}            
                         insert_row(target_range, insertion_row, SPREADSHEET_ID, sheets_service)
-                        whatsapp_reponse(mensaje_confirmacion_usuario + f"https://docs.google.com/spreadsheets/d/{new_sheet_id}/edit", numero, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER)
+                        whatsapp_reponse(mensaje_budget_usuario, numero, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER)
+                        return jsonify({'status': 'ok', 'message': 'Se añade informacion del usuario.'}), 200
+                    except Exception as e:
+                        try:
+                            drive = build('drive', 'v3', credentials=get_credentials(b64_pickle))
+                            drive.files().delete(fileId=new_sheet_id).execute()
+                        except:
+                            pass
+                        whatsapp_reponse("Hubo un error al ingresar tus datos, vuelve a intentarlo o comunicate con el administrador.", numero, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER)
+                        return jsonify({'error': f'Error al procesar la solicitud: {str(e)}'}), 500
+                elif user_data.status == "pending_budget":
+                    try:
+                        budget_list = [elemento.strip() for elemento in mensaje.split(',')]
+                        categories_list = [elemento.strip() for elemento in user_data.categories.split(',')]
+                        if len(budget_list) != len(categories_list):
+                            raise Exception("listas de longitudes diferentes")
+                        for i in range(len(budget_list)):
+                            try:
+                                budget_list[i] == float(budget_list[i])
+                            except Exception as e:
+                                whatsapp_reponse(mensaje_pago_usuario, numero, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER)
+                                return jsonify({'error': f'Error al procesar la solicitud: {str(e)}'}), 500
+                        for i in range(len(budget_list)):
+                            insertion_row = {
+                                'values':[[budget_list[i]]]
+                            } 
+                            insert_row(f"Presupuesto!B{i+3}", insertion_row, user_data.url_sheet, sheets_service)
+                        insertion_row_number = rows.index(row) + 1
+                        target_range = f"{SHEET_NAME}!C{insertion_row_number}"
+                        insertion_row = {
+                            'values':[['pending_payment']]
+                        }            
+                        insert_row(target_range, insertion_row, SPREADSHEET_ID, sheets_service)
+                        whatsapp_reponse(mensaje_confirmacion_usuario + f"https://docs.google.com/spreadsheets/d/{user_info.url_sheet}/edit", numero, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER)
                         whatsapp_reponse(mensaje_pago_usuario, numero, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER)
                         return jsonify({'status': 'ok', 'message': 'Se añade informacion del usuario.'}), 200
                     except Exception as e:
+                        whatsapp_reponse("Hubo un error al ingresar tus datos, vuelve a intentarlo o comunicate con el administrador.", numero, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER)
                         return jsonify({'error': f'Error al procesar la solicitud: {str(e)}'}), 500
+                elif user_data.status == "pending_payment":
+                    whatsapp_reponse("Tu usuario todavía no se encuentra activo, realiza el pago y/o avisa al administrador si ya lo has hecho para activar tu usuario.", numero, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER)
+                    return jsonify({'status': 'Se avisa al usuario de su status de pago'}), 200
                 elif user_data.status == "active":
                     client = OpenAI()
                     decision = client.responses.create(
@@ -229,7 +262,7 @@ def webhook():
                         categories_budget = [sublist[0] for sublist in budget_rows[2:]]
                         found_flag = False
                         for i in range(len(categories_budget)):
-                            if categories_budget[i] in mensaje:
+                            if categories_budget[i].lower() in mensaje.lower():
                                 found_flag = True
                                 break
                         if found_flag:
