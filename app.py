@@ -182,7 +182,7 @@ def webhook():
                     decision = client.responses.create(
                         prompt = {
                             "id"  : decision_prompt_id,
-                            "version": "1",
+                            "version": "2",
                             "variables": {
                             "mensaje": f"{mensaje}"
                             }
@@ -284,6 +284,21 @@ def webhook():
                                 TWILIO_AUTH_TOKEN,
                                 TWILIO_WHATSAPP_NUMBER)
                         return jsonify({'status': 'ok', 'message': 'Se atiende solicitud del usuario.'}), 200
+                    elif decision.output_text == "informacion":
+                        whatsapp_reponse(
+                        f"""
+                        Te envío tu información
+                        Categorías: {user_data.categories}
+                        Medios de pago: {user_data.medio_pago}
+                        Moneda principal: {user_data.moneda}
+                        Link de Sheets: https://docs.google.com/spreadsheets/d/{user_data.url_sheet}/edit
+                        """,
+                        numero,
+                        TWILIO_ACCOUNT_SID,
+                        TWILIO_AUTH_TOKEN,
+                        TWILIO_WHATSAPP_NUMBER)
+                        return jsonify({'status': 'ok', 'message': 'Se atiende solicitud del usuario.'}), 200
+
                                 
         # If the user is not found in  the database new user is created
         create_user(rows, numero, SHEET_NAME, SPREADSHEET_ID, sheets_service)
