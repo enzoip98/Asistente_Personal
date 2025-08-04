@@ -182,7 +182,7 @@ def webhook():
                     decision = client.responses.create(
                         prompt = {
                             "id"  : decision_prompt_id,
-                            "version": "2",
+                            "version": "3",
                             "variables": {
                             "mensaje": f"{mensaje}"
                             }
